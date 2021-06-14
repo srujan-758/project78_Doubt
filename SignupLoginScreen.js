@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View,Text,StyleSheet,TextInput,TouchableOpacity,Image,Alert} from 'react-native'
+import {View,Text,StyleSheet,TextInput,TouchableOpacity,Image,Alert,Modal,ScrollView,KeyboardAvoidingView} from 'react-native'
 import db from '../config'
 import firebase from 'firebase'
 
@@ -23,18 +23,19 @@ export default class SignupLoginScreen extends Component{
         return Alert.alert("password doesn't match\ reCheck your password.")
     }else{
       firebase.auth().createUserWithEmailAndPassword(emailId, password)
-      .then(()=>{
+      .then((response)=>{
         db.collection('users').add({
           first_Name:this.state.firstName,
           last_Name:this.state.lastName,
           username:this.state.emailId,
-          address:this.state.address
+          address:this.state.address,
+          mobile_number:this.state.contact,
         })
         return  Alert.alert(
              'User Added Successfully',
              '',
              [
-               {text: 'OK', onPress: () => this.setState({"isModalVisible" : false})},
+               {text: 'OK', onPress: () => this.setState({isModalVisible : false})},
              ]
          );
       })
@@ -160,7 +161,7 @@ export default class SignupLoginScreen extends Component{
           <View style={styles.modalBackButton}>
             <TouchableOpacity
               style={styles.cancelButton}
-              onPress={()=>this.setState({"isModalVisible":false})}
+              onPress={()=>this.setState({isModalVisible:false})}
             >
             <Text style={{color:'#ff5722'}}>Cancel</Text>
             </TouchableOpacity>
@@ -183,7 +184,11 @@ export default class SignupLoginScreen extends Component{
 
     <Text style={styles.HeadingTextStyle}>BARTER SYSTEM</Text>
 
+    {
+      this.showModal()
+    }
 
+     <View>
        <TextInput
         style={styles.EmailTextInputStyle}
         placeholder = "Enter E-mail"
@@ -212,6 +217,7 @@ export default class SignupLoginScreen extends Component{
           >
             <Text style={styles.ButtonTextStyle}>SIGN-UP</Text>
          </TouchableOpacity>
+        </View> 
          
       </View>   
      )  
